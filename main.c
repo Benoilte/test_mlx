@@ -6,7 +6,7 @@
 /*   By: bebrandt <benoit.brandt@proton.me>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 17:48:31 by bebrandt          #+#    #+#             */
-/*   Updated: 2024/01/20 11:56:58 by bebrandt         ###   ########.fr       */
+/*   Updated: 2024/01/20 13:16:44 by bebrandt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,11 @@ typedef struct s_data {
 	int		line_length;
 	int		endian;
 }	t_data;
+
+typedef struct s_vars {
+	void	*mlx_ptr;
+	void	*win_ptr;
+}	t_vars;
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
@@ -70,18 +75,36 @@ void	print_square(t_data *img, int start_x, int start_y, int color, int size)
 	}
 }
 
-int	main(void)
+void	display_square(t_vars *vars, int color)
 {
-	void	*mlx_ptr;
-	void	*win_ptr;
 	t_data	img;
 
-	mlx_ptr = mlx_init();
-	win_ptr = mlx_new_window(mlx_ptr, 1920, 1080, "Test Hello world!");
-	img.img = mlx_new_image(mlx_ptr, 1920, 1080);
+	img.img = mlx_new_image(vars->mlx_ptr, 1920, 1080);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length,
 					&img.endian);
-	print_square(&img, 5, 5, 0x00FF0000, 100);
-	mlx_put_image_to_window(mlx_ptr, win_ptr, img.img, 0, 0);
-	mlx_loop(mlx_ptr);
+	print_square(&img, 5, 5, color, 100);
+	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, img.img, 0, 0);
+}
+
+int	key_hook(int key, void *param)
+{
+	(void)param;
+	ft_printf("%d\n", key);
+	if (key == 15)
+		display_square((t_vars *)param, 0xFF0000);
+	if (key == 5)
+		display_square((t_vars *)param, 0x00FF00);
+	if (key == 11)
+		display_square((t_vars *)param, 0x0000FF);
+	return (0);
+}
+
+int	main(void)
+{
+	t_vars	vars;
+
+	vars.mlx_ptr = mlx_init();
+	vars.win_ptr = mlx_new_window(vars.mlx_ptr, 1920, 1080, "Heyllo world!");
+	mlx_key_hook(vars.win_ptr, &key_hook, &vars);
+	mlx_loop(vars.mlx_ptr);
 }
