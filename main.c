@@ -6,7 +6,7 @@
 /*   By: bebrandt <benoit.brandt@proton.me>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 17:48:31 by bebrandt          #+#    #+#             */
-/*   Updated: 2024/01/20 13:16:44 by bebrandt         ###   ########.fr       */
+/*   Updated: 2024/01/20 16:59:55 by bebrandt         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,16 +86,58 @@ void	display_square(t_vars *vars, int color)
 	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, img.img, 0, 0);
 }
 
-int	key_hook(int key, void *param)
+int	ft_mlx_close(t_vars *vars)
+{
+	ft_printf("mlx_ptr in close%p\n", vars->mlx_ptr);
+	mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+	exit(0);
+}
+
+int	mouse_move(int x, int y, void *param)
 {
 	(void)param;
-	ft_printf("%d\n", key);
+	(void)x;
+	(void)y;
+	return (0);
+}
+
+int	mouse_enter_hook(t_vars *param)
+{
+	(void)param;
+	ft_printf("Hello and welcome, you are in the windows\n");
+	return (0);
+}
+
+int	mouse_exit_hook(t_vars *param)
+{
+	(void)param;
+	ft_printf("Bye, You are out of the windows\n");
+	return (0);
+}
+
+int	key_hook(int key, void *param)
+{
 	if (key == 15)
 		display_square((t_vars *)param, 0xFF0000);
 	if (key == 5)
 		display_square((t_vars *)param, 0x00FF00);
 	if (key == 11)
 		display_square((t_vars *)param, 0x0000FF);
+	if (key == 53)
+		ft_mlx_close((t_vars *)param);
+	return (0);
+}
+
+int	mouse_hook(int button, int x, int y, void *param)
+{
+	(void)param;
+	ft_printf("button: %d, x: %d, y: %d\n", button, x, y);
+	return (0);
+}
+
+int	loop_hook(void *param)
+{
+	ft_printf("mlx_ptr: %p\n", ((t_vars *)(param))->mlx_ptr);
 	return (0);
 }
 
@@ -105,6 +147,12 @@ int	main(void)
 
 	vars.mlx_ptr = mlx_init();
 	vars.win_ptr = mlx_new_window(vars.mlx_ptr, 1920, 1080, "Heyllo world!");
+	ft_printf("mlx_ptr in main %p\n", vars.mlx_ptr);
 	mlx_key_hook(vars.win_ptr, &key_hook, &vars);
+	mlx_mouse_hook (vars.win_ptr, &mouse_hook, &vars);
+	mlx_hook(vars.win_ptr, 17, 1L << 19, &ft_mlx_close, &vars);
+	mlx_hook(vars.win_ptr, 6, 1L << 6, &mouse_move, &vars);
+	mlx_hook(vars.win_ptr, 7, 1L << 6, mouse_enter_hook, &vars);
+	mlx_hook(vars.win_ptr, 8, 1L << 6, mouse_exit_hook, &vars);
 	mlx_loop(vars.mlx_ptr);
 }
