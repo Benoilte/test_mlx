@@ -6,7 +6,7 @@
 #    By: bebrandt <benoit.brandt@proton.me>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/04 11:59:35 by bebrandt          #+#    #+#              #
-#    Updated: 2024/01/20 11:54:09 by bebrandt         ###   ########.fr        #
+#    Updated: 2024/01/21 11:27:17 by bebrandt         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,8 +35,8 @@ UNAME = $(shell uname)
 MLX_LIB = $(MLX_DIR)/libmlx.a
 
 ifeq ($(UNAME), Linux)
-	INCLUDES = -I/usr/include -Iminilibx_linux
-	MLX_DIR = ./minilibx_linux
+	INCLUDES = -I/usr/include -Iminilibx-linux
+	MLX_DIR = ./minilibx-linux
 else
 	INCLUDES = -Iminilibx_macos
 	MLX_DIR = ./minilibx_macos
